@@ -1,0 +1,5 @@
+{
+  "build_cmd": "cd /target && npm install && npx tsc",
+  "test_cmd": "cd /target && npm install && npx tsc && python -m pytest tests/ -v",
+  "log_parser": "parse_log_pytest"
+}
