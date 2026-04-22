@@ -1,0 +1,78 @@
+You are tasked with translating a Python repository into idiomatic TypeScript.
+
+## Source Repository
+
+The source code is located at /source. It is a lightweight asynchronous task queue
+system with pluggable scheduling strategies, multiple worker types, persistent
+storage backends, and utility modules for serialization and validation.
+
+The repository contains approximately 18 Python source files organized into the
+following packages:
+  - models (job, queue, result)
+  - workers (base worker, CPU worker, IO worker)
+  - scheduler (priority strategy, round-robin strategy, main scheduler)
+  - storage (abstract backend, memory backend, file backend)
+  - utils (logging, serialization, validation)
+  - config
+  - main entry point
+
+## Target
+
+Translate the entire repository into idiomatic TypeScript (ES2022, strict mode)
+targeting Node.js >= 20. Place all translated source code under /target/src/.
+
+## Requirements
+
+1. All source modules, their public APIs, and their behavioral contracts must be
+   preserved. The translated code must produce identical outputs for identical inputs
+   across all edge cases, including error conditions.
+
+2. Use native Node.js async/await and Promises for all asynchronous operations.
+   Where the Python code uses asyncio.to_thread for CPU-bound work, use an
+   appropriate async mechanism in TypeScript.
+
+3. Use the built-in Node.js fs/promises module for async file I/O — do NOT use
+   third-party file I/O libraries.
+
+4. Implement structured logging. You may choose any idiomatic TypeScript/Node.js
+   logging approach, but log output must include structured key-value context
+   (job_id, worker, elapsed, etc.) equivalent to what the Python code produces
+   with structlog.
+
+5. The task queue must be implemented with a proper min-heap (priority queue) data
+   structure. Do NOT use Array.sort() as a substitute.
+
+6. All custom exception/error types from the Python source (InvalidJobStateError,
+   QueueFullError, DuplicateJobError) must be translated to custom Error subclasses
+   in TypeScript.
+
+7. Translate all Python dataclasses to TypeScript classes with equivalent constructor
+   signatures, property accessors, and serialization methods (toDict/fromDict).
+
+8. Translate all Python enums to idiomatic TypeScript enums or const objects that
+   preserve the same string/numeric values.
+
+9. The configuration class must validate all constraints on construction, throwing
+   errors for invalid values, matching the Python __post_init__ validation exactly.
+
+10. Produce a valid package.json and tsconfig.json. The project must compile with
+    tsc and be runnable with ts-node or equivalent.
+
+11. Translate the serialization utilities to produce JSON strings that are
+    structurally equivalent to the Python json.dumps output.
+
+12. Translate the validation utilities preserving exact validation logic — same
+    rules for job names, payload keys, priority ranges, and tag sanitization.
+
+## What NOT to Translate
+
+- Do NOT translate any test files. The target repository should contain zero tests.
+- Do NOT translate Python-specific dev tooling (pyproject.toml, requirements.txt
+  are replaced by package.json/tsconfig.json).
+
+## Deliverable
+
+A complete, compilable TypeScript project under /target/ that faithfully reproduces
+the behavior of the Python source. The project structure should follow TypeScript
+and Node.js conventions — use camelCase for variables/functions, PascalCase for
+classes/types, and organize imports using ES module style.

@@ -1,5 +1,22 @@
 {
+  "instance_id": "sycamore__python_to_ts_taskqueue_behavioral_001",
+  "pipeline": "sycamore",
+  "task_type": "repository_translation",
+  "repo": {
+    "image_name": "micro1ai/sycamore-taskqueue:task001-965862f"
+  },
+  "source_language": "python",
+  "target_language": "typescript",
+  "language_pair": "python-to-typescript",
+  "difficulty": "medium",
+  "dominant_challenge": "concurrency_model_adaptation",
   "build_cmd": "cd /target && npm install && npx tsc",
   "test_cmd": "cd /target && npm install && npx tsc && python -m pytest tests/ -v",
-  "log_parser": "parse_log_pytest"
+  "log_parser": "parse_log_pytest",
+  "scoring": {
+    "FAIL_TO_PASS": [
+      "... (all 84 test names)"
+    ],
+    "expected_test_count": 84
+  }
 }

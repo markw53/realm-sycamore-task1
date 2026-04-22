@@ -1,0 +1,30 @@
+FROM node:20-slim
+
+# Install Python and pip
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create symlink so 'python' works
+RUN ln -sf /usr/bin/python3 /usr/bin/python
+
+# Install pytest globally (needed for behavioral tests at eval time)
+RUN pip3 install --no-cache-dir --break-system-packages pytest
+
+# Copy source Python repo
+WORKDIR /source
+COPY source_repo/ /source/
+RUN pip3 install --no-cache-dir --break-system-packages -r /source/requirements.txt
+
+# Verify source runs
+RUN cd /source && python3 -m src.main
+
+# Create empty target directory for agent
+RUN mkdir -p /target
+
+# Set working directory
+WORKDIR /
+
