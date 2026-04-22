@@ -4,15 +4,22 @@ Python pytest tests that verify the translated TypeScript repository
 by building it and exercising it via subprocess.
 """
 
+
 import subprocess
 import json
+import os
 import pytest
+from pathlib import Path
 
-TARGET_DIR = "/target"
+TARGET_DIR = os.environ.get("TARGET_DIR", str(Path(__file__).resolve().parent.parent))
 
 @pytest.fixture(scope="session", autouse=True)
 def build_target():
     """Build the TypeScript project once before all tests."""
+    # Skip build if dist/ already exists (already compiled)
+    if os.path.exists(os.path.join(TARGET_DIR, "dist", "config.js")):
+        return
+
     result = subprocess.run(
         ["npm", "install"],
         cwd=TARGET_DIR,
@@ -29,7 +36,6 @@ def build_target():
     )
     assert result.returncode == 0, f"tsc failed:\n{result.stderr}"
 
-
 def run_node(script: str) -> subprocess.CompletedProcess:
     """Run a Node.js script against the compiled target."""
     return subprocess.run(
@@ -39,7 +45,6 @@ def run_node(script: str) -> subprocess.CompletedProcess:
         text=True,
         timeout=30,
     )
-
 
 # ============================================================
 # 1. QueueConfig
