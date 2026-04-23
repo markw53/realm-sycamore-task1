@@ -24,23 +24,21 @@ class StructuredLogger implements Logger {
   }
 
   info(event: string, context: Record<string, unknown> = {}): void {
-    console.log(this.format("info", event, context));
+    process.stderr.write(this.format("info", event, context) + "\n");
   }
 
   warning(event: string, context: Record<string, unknown> = {}): void {
-    console.warn(this.format("warning", event, context));
+    process.stderr.write(this.format("warning", event, context) + "\n");
   }
 
   error(event: string, context: Record<string, unknown> = {}): void {
-    console.error(this.format("error", event, context));
+    process.stderr.write(this.format("error", event, context) + "\n");
   }
 }
 
 let logger: Logger = new StructuredLogger();
 
 export function configureLogging(_level: string = "INFO"): void {
-  // Level filtering could be added here if needed.
-  // For now, the structured logger always emits.
   logger = new StructuredLogger();
 }
 

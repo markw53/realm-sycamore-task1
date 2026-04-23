@@ -9,20 +9,19 @@ import subprocess
 import json
 import os
 import pytest
-from pathlib import Path
 
-TARGET_DIR = os.environ.get("TARGET_DIR", str(Path(__file__).resolve().parent.parent))
+TASKQUEUE_DIR = os.environ.get("TASKQUEUE_DIR", "/target")
 
 @pytest.fixture(scope="session", autouse=True)
 def build_target():
     """Build the TypeScript project once before all tests."""
-    # Skip build if dist/ already exists (already compiled)
-    if os.path.exists(os.path.join(TARGET_DIR, "dist", "config.js")):
+    dist_marker = os.path.join(TASKQUEUE_DIR, "dist", "config.js")
+    if os.path.exists(dist_marker):
         return
 
     result = subprocess.run(
         ["npm", "install"],
-        cwd=TARGET_DIR,
+        cwd=TASKQUEUE_DIR,
         capture_output=True,
         text=True,
     )
@@ -30,17 +29,18 @@ def build_target():
 
     result = subprocess.run(
         ["npx", "tsc"],
-        cwd=TARGET_DIR,
+        cwd=TASKQUEUE_DIR,
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0, f"tsc failed:\n{result.stderr}"
 
+
 def run_node(script: str) -> subprocess.CompletedProcess:
     """Run a Node.js script against the compiled target."""
     return subprocess.run(
         ["node", "-e", script],
-        cwd=TARGET_DIR,
+        cwd=TASKQUEUE_DIR,
         capture_output=True,
         text=True,
         timeout=30,
