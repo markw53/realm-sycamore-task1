@@ -1,7 +1,30 @@
-Issue Introduced: Using Array.sort() Instead of a Min-Heap for the Task Queue
+Why would you introduce such an issue?
 
-I swapped out the proper min-heap priority queue with a simple sorted array that re-sorts itself every time a job is added, and pulls jobs off the front. This is an easy mistake for a developer to make when translating from Python to Typescript because Python has a built-in heap library (heapq) but JavaScript does not — there's no standard equivalent — so just sorting an array feels like the obvious quick fix and seems to work fine in basic testing.
+I swapped out the proper min-heap priority queue with a simple sorted
+array that re-sorts itself every time a job is pushed and pulls jobs
+off the front. A developer could realistically make this mistake when
+translating from Python to TypeScript because Python ships with a
+built-in heap library (heapq) but JavaScript and Node.js have no
+standard equivalent, so reaching for Array.sort() on every insert
+feels like the obvious quick fix and appears to work correctly in
+small smoke tests. The bug is significant because it silently
+degrades a core data-structure invariant of the task queue — both
+performance and FIFO tie-breaking — without producing any visible
+error until the queue is exercised under load or with same-priority
+jobs.
 
-What the Problem Is and How to Fix It
+Describe the issue and how to fix it.
 
-The main issue is performance and ordering reliability. Sorting the entire array every time a new job is added is much slower than using a heap as the queue grows — it turns a fast operation into an unnecessarily expensive one. There's also a risk that jobs with the same priority won't come out in the order they were added, which breaks the expected first-in-first-out tie-breaking behaviour that the Python code guarantees using an insertion counter. To fix this, you need to write a small min-heap class in Typescript that keeps jobs ordered by priority (and by insertion order as a tiebreaker) using standard heap operations — bubbling items up when added and sinking them down when removed. The Task-Queue should use this heap internally instead of a sorted array, while still keeping the dictionary lookup for finding and removing jobs by ID.
+The task queue is supposed to deliver jobs in priority order, and
+when two jobs share the same priority it must deliver them in the
+order they were submitted (first-in-first-out). Sorting the entire
+array on every push works for ordering by priority alone, but it is
+much slower than a heap as the queue grows, and depending on the
+sort's stability it can also break the FIFO tie-breaking that the
+Python source guarantees by attaching an insertion counter to each
+heap entry. To fix this, the agent needs to implement a small
+min-heap class in TypeScript that orders entries by a (priority,
+insertion_counter) tuple and exposes the standard heap operations —
+sifting items up when pushed and sifting them down when popped. The
+TaskQueue should use this heap internally for ordering while keeping
+the existing dictionary lookup for finding and removing jobs by ID.

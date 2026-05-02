@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import shutil
 import subprocess
 import sys
@@ -263,12 +262,12 @@ def _evaluate_submission(submission_path: Path) -> Dict[str, Any]:
             content = ts_file.read_text().strip()
             # Exclude files that are just imports/exports with no logic
             lines = [
-                l.strip()
-                for l in content.split("\n")
-                if l.strip()
-                and not l.strip().startswith("//")
-                and not l.strip().startswith("import")
-                and not l.strip().startswith("export")
+                line.strip()
+                for line in content.split("\n")
+                if line.strip()
+                and not line.strip().startswith("//")
+                and not line.strip().startswith("import")
+                and not line.strip().startswith("export")
             ]
             if len(lines) < 3:
                 empty_files.append(str(ts_file.relative_to(workspace)))
