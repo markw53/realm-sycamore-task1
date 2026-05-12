@@ -6,12 +6,12 @@ import { QueueConfig } from "../config";
 import { Job, JobStatus } from "../models/job";
 import { TaskQueue } from "../models/queue";
 import { JobResult } from "../models/result";
-import { PriorityScheduler } from "./priority";
-import { RoundRobinScheduler } from "./round_robin";
+import { getLogger } from "../utils/logging";
 import { BaseWorker } from "../workers/base";
 import { CpuWorker } from "../workers/cpu_worker";
 import { IoWorker } from "../workers/io_worker";
-import { getLogger } from "../utils/logging";
+import { PriorityScheduler } from "./priority";
+import { RoundRobinScheduler } from "./round_robin";
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -135,5 +135,26 @@ export class Scheduler {
       if (!worker.isBusy) return worker;
     }
     return null;
+  }
+
+  submit_and_process(job: Job): Promise<JobResult | null> {
+    this.submit(job);
+    return this.processNext();
+  }
+
+  run_all(): Promise<JobResult[]> {
+    return this.runAll();
+  }
+
+  get_stats(): Record<string, unknown> {
+    return this.getStats();
+  }
+
+  get_result_by_id(jobId: string): JobResult | null {
+    return this.getResult(jobId);
+  }
+
+  round_robin_strategy(): boolean {
+    return this.config.schedulingStrategy === "round_robin";
   }
 }

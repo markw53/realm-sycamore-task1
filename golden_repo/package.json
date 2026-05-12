@@ -1,14 +1,15 @@
 {
-  "name": "task-queue-ts",
-  "version": "0.1.0",
-  "private": true,
+  "name": "taskqueue-golden",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js"
   },
+  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.3.0"
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
   }
 }

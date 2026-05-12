@@ -15,8 +15,8 @@
   "direction": "dynamic-to-typed",
   "difficulty_band": "medium",
   "title": "Translate async task queue system from Python to TypeScript",
-  "build_cmd": "cd /target && ( [ -d node_modules ] || npm install ) && ( [ -d dist ] || npx tsc )",
-  "test_cmd": "cd /target && ( [ -d node_modules ] || npm install ) && ( [ -d dist ] || npx tsc ) && TASKQUEUE_DIR=/target python3 -m pytest /target/tests/test_task_queue_behavioral.py --rootdir=/target/tests -v --tb=short --no-header -rA --color=no -p no:cacheprovider",
+  "build_cmd": "cd /target && ( [ -d node_modules ] || npm install ) && npx tsc --pretty false",
+  "test_cmd": "cd /target && ( [ -d node_modules ] || npm install ) && npx tsc --pretty false && TASKQUEUE_DIR=/target python3 -m pytest /target/tests/test_task_queue_behavioral.py --rootdir=/target/tests -v --tb=short --no-header -rA --color=no -p no:cacheprovider",
   "log_parser": "parse_log_pytest",
   "FAIL_TO_PASS": [
     "test_task_queue_behavioral.py::TestQueueConfig::test_default_values",
@@ -109,6 +109,6 @@
     "test_task_queue_behavioral.py::TestMemoryStorage::test_save_makes_copy"
   ],
   "PASS_TO_PASS": [],
-  "expected_test_count": 88,
+  "expected_test_count": 97,
   "golden_repo": "golden_repo"
 }
