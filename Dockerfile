@@ -30,8 +30,15 @@ RUN pip3 install --no-cache-dir --break-system-packages -r /source/requirements.
 # Verify source runs
 RUN cd /source && python3 -m src.main
 
-# Create empty target directory for agent
+# Create target directory
 RUN mkdir -p /target
 
-# Set working directory for agent
-WORKDIR /
+# Copy translated TypeScript project into /target
+COPY target/ /target/
+
+# Install Node dependencies for the TS project
+WORKDIR /target
+RUN npm install
+
+# Build the TypeScript project
+RUN npx tsc
